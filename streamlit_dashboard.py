@@ -109,9 +109,10 @@ if df is not None:
     st.subheader("🎯 경력별 채용공고 분포")
     experience_counts = filtered_df['experience'].value_counts()
     if not experience_counts.empty:
-        fig_experience = px.horizontal_bar(
+        fig_experience = px.bar(
             x=experience_counts.values,
             y=experience_counts.index,
+            orientation='h',
             title="경력별 채용공고 수",
             labels={'x': '채용공고 수', 'y': '경력 요구사항'}
         )
