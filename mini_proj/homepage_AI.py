@@ -438,7 +438,10 @@ def show_mypage():
 
             text_align_center_css = """
                 <style>
-                    tr {
+                    table {
+                        text-align: center;
+                    }
+                    .gdg-clip-region {
                         text-align: center;
                     }
                 </style>
