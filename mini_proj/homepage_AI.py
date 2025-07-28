@@ -11,7 +11,6 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-
 # Supabase 환경 변수 로드
 SUPABASE_URL = "https://ahbsoacmxuokcbdhafqt.supabase.co"
 SUPABASE_KEY = "sb_publishable_iji2eRa_ugg_cy_E9jvOmw_MtMGbh0_"
