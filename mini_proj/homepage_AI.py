@@ -236,18 +236,9 @@ def read_user_reservations(account_id):
     #     return result.data
 
     try:
-        # 2. JOIN 쿼리 실행
-        # reservations 테이블을 기준으로 쿼리하면서, car_number를 통해 cars 테이블을 조인합니다.
-        # Supabase PostgREST는 외래 키 관계가 설정되어 있다면 자동으로 조인된 데이터를 중첩하여 가져옵니다.
-        # 만약 외래 키가 명시적으로 설정되어 있지 않다면,
-        # 'cars!inner(car_model, car_oil_type)' 와 같이 명시적인 조인 문법을 사용해야 합니다.
-        # 여기서는 'cars!inner(car_model, car_oil_type)'를 사용하여 car_number 기준으로 조인합니다.
-        # 'car_number'는 cars 테이블에서 유니크한 값이어야 합니다.
-        data, count = conn.query(
-            "*", # VIEW 의 모든 컬럼
-            table="reservation_details",
-            limit=10  # 필요에 따라 limit 조절
-        ).execute()
+        # 뷰 테이블 데이터 추출
+        response = conn.table('reservation_details').select('*').eq('account_id', account_id).execute()
+        data = response.data # 결과에서 실제 데이터만 추출
 
         if data:
             st.write("#### 조인된 예약 데이터:")
