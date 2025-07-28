@@ -14,7 +14,22 @@ st.set_page_config(
 # 1. Supabase 연결 초기화
 # Streamlit secrets.toml에 저장된 정보를 자동으로 로드합니다.
 # cache_ttl은 쿼리 결과를 캐싱할 시간을 설정합니다. (기본값은 0, 즉 캐싱 안 함)
-conn = st.connection("supabase", type=SupabaseConnection, ttl="10m")
+# conn = st.connection("supabase", type=SupabaseConnection, ttl="10m")
+try:
+    supabase_url = st.secrets["connections"]["supabase"]["url"]
+    supabase_key = st.secrets["connections"]["supabase"]["key"]
+    conn = st.connection(
+        "supabase",
+        type=SupabaseConnection,
+        url=supabase_url,  # URL 직접 전달
+        key=supabase_key,  # Key 직접 전달
+        ttl="10m"
+    )
+except KeyError as e:
+    st.error(f"Streamlit secrets에서 Supabase 연결 정보를 찾을 수 없습니다: {e}")
+    st.info("`.streamlit/secrets.toml` 파일이 올바른 위치에 있는지, 형식이 맞는지 확인해주세요.")
+    st.stop() # 정보가 없으면 앱 실행 중단
+
 
 # 비밀번호 해싱 함수
 def hash_password(password):
