@@ -438,7 +438,7 @@ def show_mypage():
 
             text_align_center_css = """
                 <style>
-                    table {
+                    th {
                         text-align: center !important;
                     }
                     .gdg-input {
