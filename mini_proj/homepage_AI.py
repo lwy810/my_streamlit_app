@@ -14,7 +14,7 @@ st.set_page_config(
 
 # Supabase 환경 변수 로드
 SUPABASE_URL = "https://ahbsoacmxuokcbdhafqt.supabase.co"
-SUPABASE_KEY = "sb_publishable_iji2eRa_ugg_cy_E9jvOmw_MtMGbh0_"
+SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFoYnNvYWNteHVva2NiZGhhZnF0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM2NjczMDcsImV4cCI6MjA2OTI0MzMwN30.rvHOIc6TdJ3G0T84Rl9CDiVR_qud7E11xk45QEClhiY"
 # Supabase 클라이언트 생성
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
