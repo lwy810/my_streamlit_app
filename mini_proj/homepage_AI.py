@@ -238,32 +238,20 @@ def read_user_reservations(account_id):
     try:
         # 뷰 테이블 데이터 추출
         response = conn.table('reservation_details').select('*').eq('account_id', account_id).execute()
-        data = response.data # 결과에서 실제 데이터만 추출
+        datas = response.data # 결과에서 실제 데이터만 추출
 
-        if data:
-            st.write("#### 조인된 예약 데이터:")
-            # 데이터를 보기 좋게 테이블 형태로 표시
-            display_data = []
-            for reservation in data:
-                display_data.append({
-                    "차량 번호": reservation.get('car_number'),
-                    "계정 ID": reservation.get('account_id'),
-                    "예약 시작일": reservation.get('rent_reservation_start_date'),
-                    "예약 종료일": reservation.get('rent_reservation_end_date'),
-                    "예약 상태": reservation.get('rent_reservation_state'),
-                    "예약 가격": reservation.get('rent_reservation_price'),
-                    "차량 유형": reservation.get('car_type'), 
-                    "차량 모델": reservation.get('car_model'), 
-                    "차량 시리즈": reservation.get('car_series'),
-                    "차량 연식": reservation.get('car_model_year'), 
-                    "차량 유종": reservation.get('car_oil_type'),
-                    "차량 색상": reservation.get('car_color')
-                })
-            return display_data      
-        
+        if datas:
+            for data in datas :
+                for i in data :
+                    print(data[i])
+
+        return datas          
+
     except Exception as e:
         st.error(f"예약 내역 조회 중 오류 발생: {e}")
         return []
+            
+        
 
 # --- 페이지별 함수 정의 ---
 
@@ -446,22 +434,27 @@ def show_mypage():
         
         reservations = read_user_reservations(user_id)
 
-        if reservations:
-            processed_reservations = []
-            for res in reservations:
-                car_info = res.get('cars', {})
-                processed_reservations.append({
-                    "차량 번호": res.get('car_number', 'N/A'),
-                    "차량 모델": car_info.get('car_model', 'N/A'),
-                    "차량 시리즈": car_info.get('car_series', 'N/A'),
-                    "유종": car_info.get('car_oil_type', 'N/A'),
-                    "차종": car_info.get('car_type', 'N/A'),
-                    "대여 날짜": res.get('rent_reservation_start_date', 'N/A'),
-                    "반납 날짜": res.get('rent_reservation_end_date', 'N/A'),
-                    "총 금액": f"{res.get('rent_reservation_price', 0):,}원",
-                    "예약일": res.get('rent_reservation_date', 'N/A')
-                })
-            df = pd.DataFrame(processed_reservations)
+        st.write("#### 조인된 예약 데이터:")
+        # 데이터를 보기 좋게 테이블 형태로 표시
+        display_data = []
+
+        for reservation in reservations:
+            display_data.append({
+                "차량 번호": reservation.get('car_number'),
+                "계정 ID": reservation.get('account_id'),
+                "예약 시작일": reservation.get('rent_reservation_start_date'),
+                "예약 종료일": reservation.get('rent_reservation_end_date'),
+                "예약 상태": reservation.get('rent_reservation_state'),
+                "예약 가격": reservation.get('rent_reservation_price'),
+                "차량 유형": reservation.get('car_type'), 
+                "차량 모델": reservation.get('car_model'), 
+                "차량 시리즈": reservation.get('car_series'),
+                "차량 연식": reservation.get('car_model_year'), 
+                "차량 유종": reservation.get('car_oil_type'),
+                "차량 색상": reservation.get('car_color')
+            })
+             
+            df = pd.DataFrame(display_data)
             st.dataframe(df, use_container_width=True, hide_index=True)
         else:
             st.info("예약 내역이 없습니다.")
