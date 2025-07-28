@@ -441,7 +441,7 @@ def show_mypage():
                     th {
                         text-align: center !important;
                     }
-                    .gdg-input {
+                    td {
                         text-align: center !important;
                     }
                 </style>
