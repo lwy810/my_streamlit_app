@@ -438,10 +438,11 @@ def show_mypage():
 
             text_align_center_css = """
                 <style>
-                    .gdg-s1dgczr6 {
+                    tr, th, td {
                         text-align: center;
                     }
                 </style>
+
             """   
             st.markdown(text_align_center_css, unsafe_allow_html=True)
 
