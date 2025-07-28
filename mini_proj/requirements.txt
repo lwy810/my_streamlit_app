@@ -1,3 +1,2 @@
-supabase
 pandas
 st_supabase_connection

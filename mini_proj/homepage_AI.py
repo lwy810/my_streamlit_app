@@ -1,6 +1,5 @@
 import streamlit as st
 from datetime import datetime, timedelta
-from supabase import create_client, Client
 import hashlib
 import pandas as pd
 from st_supabase_connection import SupabaseConnection
