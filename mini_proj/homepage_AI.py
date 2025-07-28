@@ -438,7 +438,7 @@ def show_mypage():
 
             text_align_center_css = """
                 <style>
-                    tr, th, td {
+                    tr {
                         text-align: center;
                     }
                 </style>
