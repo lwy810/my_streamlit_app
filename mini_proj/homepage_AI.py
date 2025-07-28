@@ -434,26 +434,27 @@ def show_mypage():
         
         reservations = read_user_reservations(user_id)
 
-        st.write("#### 조인된 예약 데이터:")
-        # 데이터를 보기 좋게 테이블 형태로 표시
-        display_data = []
+        if reservations :
+            st.write("#### 조인된 예약 데이터:")
+            # 데이터를 보기 좋게 테이블 형태로 표시
+            display_data = []
 
-        for reservation in reservations:
-            display_data.append({
-                "차량 번호": reservation.get('car_number'),
-                "계정 ID": reservation.get('account_id'),
-                "예약 시작일": reservation.get('rent_reservation_start_date'),
-                "예약 종료일": reservation.get('rent_reservation_end_date'),
-                "예약 상태": reservation.get('rent_reservation_state'),
-                "예약 가격": reservation.get('rent_reservation_price'),
-                "차량 유형": reservation.get('car_type'), 
-                "차량 모델": reservation.get('car_model'), 
-                "차량 시리즈": reservation.get('car_series'),
-                "차량 연식": reservation.get('car_model_year'), 
-                "차량 유종": reservation.get('car_oil_type'),
-                "차량 색상": reservation.get('car_color')
-            })
-             
+            for reservation in reservations:
+                display_data.append({
+                    "차량 번호": reservation.get('car_number'),
+                    "계정 ID": reservation.get('account_id'),
+                    "예약 시작일": reservation.get('rent_reservation_start_date'),
+                    "예약 종료일": reservation.get('rent_reservation_end_date'),
+                    "예약 상태": reservation.get('rent_reservation_state'),
+                    "예약 가격": reservation.get('rent_reservation_price'),
+                    "차량 유형": reservation.get('car_type'), 
+                    "차량 모델": reservation.get('car_model'), 
+                    "차량 시리즈": reservation.get('car_series'),
+                    "차량 연식": reservation.get('car_model_year'), 
+                    "차량 유종": reservation.get('car_oil_type'),
+                    "차량 색상": reservation.get('car_color')
+                })
+                
             df = pd.DataFrame(display_data)
             st.dataframe(df, use_container_width=True, hide_index=True)
         else:
