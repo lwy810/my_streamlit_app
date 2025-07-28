@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from supabase import create_client, Client
 import hashlib
 import pandas as pd
+from st_supabase_connection import SupabaseConnection
 
 # 페이지 기본 설정
 st.set_page_config(
