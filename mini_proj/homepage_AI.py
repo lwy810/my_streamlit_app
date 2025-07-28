@@ -12,8 +12,6 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-
-
 # 1. Supabase 연결 초기화
 # Streamlit secrets.toml에 저장된 정보를 자동으로 로드합니다.
 # cache_ttl은 쿼리 결과를 캐싱할 시간을 설정합니다. (기본값은 0, 즉 캐싱 안 함)
