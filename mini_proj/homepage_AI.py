@@ -1,7 +1,5 @@
 import streamlit as st
 from datetime import datetime, timedelta
-from dotenv import load_dotenv
-import os
 from supabase import create_client, Client
 import hashlib
 import pandas as pd
@@ -13,12 +11,10 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-load_dotenv()
 
 # Supabase 환경 변수 로드
-SUPABASE_URL = os.getenv('SUPABASE_URL')
-SUPABASE_KEY = os.getenv('SUPABASE_KEY')
-
+SUPABASE_URL = "https://ahbsoacmxuokcbdhafqt.supabase.co"
+SUPABASE_KEY = "sb_publishable_iji2eRa_ugg_cy_E9jvOmw_MtMGbh0_"
 # Supabase 클라이언트 생성
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
