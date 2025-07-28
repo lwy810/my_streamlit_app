@@ -435,7 +435,6 @@ def show_mypage():
         reservations = read_user_reservations(user_id)
 
         if reservations :
-            st.write("#### 조인된 예약 데이터:")
             # 데이터를 보기 좋게 테이블 형태로 표시
             display_data = []
 
