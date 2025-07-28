@@ -217,9 +217,45 @@ def read_all_car():
 # 사용자 예약 내역 조회 함수
 def read_user_reservations(account_id):
     """사용자 ID에 해당하는 예약 내역 조회"""
+    # try:
+    #     result = supabase.table('reservations').select('*').eq('account_id', account_id).execute()
+    #     return result.data
+
     try:
-        result = supabase.table('reservations').select('*').eq('account_id', account_id).execute()
-        return result.data
+        # 2. JOIN 쿼리 실행
+        # reservations 테이블을 기준으로 쿼리하면서, car_number를 통해 cars 테이블을 조인합니다.
+        # Supabase PostgREST는 외래 키 관계가 설정되어 있다면 자동으로 조인된 데이터를 중첩하여 가져옵니다.
+        # 만약 외래 키가 명시적으로 설정되어 있지 않다면,
+        # 'cars!inner(car_model, car_oil_type)' 와 같이 명시적인 조인 문법을 사용해야 합니다.
+        # 여기서는 'cars!inner(car_model, car_oil_type)'를 사용하여 car_number 기준으로 조인합니다.
+        # 'car_number'는 cars 테이블에서 유니크한 값이어야 합니다.
+        data, count = supabase.query(
+            "*", # VIEW 의 모든 컬럼
+            table="reservation_details",
+            limit=10  # 필요에 따라 limit 조절
+        ).execute()
+
+        if data:
+            st.write("#### 조인된 예약 데이터:")
+            # 데이터를 보기 좋게 테이블 형태로 표시
+            display_data = []
+            for reservation in data:
+                display_data.append({
+                    "차량 번호": reservation.get('car_number'),
+                    "계정 ID": reservation.get('account_id'),
+                    "예약 시작일": reservation.get('rent_reservation_start_date'),
+                    "예약 종료일": reservation.get('rent_reservation_end_date'),
+                    "예약 상태": reservation.get('rent_reservation_state'),
+                    "예약 가격": reservation.get('rent_reservation_price'),
+                    "차량 유형": reservation.get('car_type'), 
+                    "차량 모델": reservation.get('car_model'), 
+                    "차량 시리즈": reservation.get('car_series'),
+                    "차량 연식": reservation.get('car_model_year'), 
+                    "차량 유종": reservation.get('car_oil_type'),
+                    "차량 색상": reservation.get('car_color')
+                })
+            return display_data      
+        
     except Exception as e:
         st.error(f"예약 내역 조회 중 오류 발생: {e}")
         return []
