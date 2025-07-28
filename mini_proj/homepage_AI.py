@@ -263,10 +263,6 @@ def show_main_page():
                         discount_rate = 0.05
                         discounted_price = int(original_price * (1 - discount_rate))
 
-                        # --- 디버깅을 위한 코드 추가 ---
-                        st.write(f"디버그: 차량 번호 {car['car_number']} 이미지 경로: {image_src_path}")
-                        # --- 디버깅 코드 끝 ---
-
                         col_img, col_details = st.columns([1, 2])
                         with col_img:
                             st.image(image_src_path, width=150, caption="", use_container_width=True)
