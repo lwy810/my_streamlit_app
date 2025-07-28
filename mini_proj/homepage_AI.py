@@ -435,6 +435,17 @@ def show_mypage():
         reservations = read_user_reservations(user_id)
 
         if reservations :
+
+            text_align_center_css = """
+                <style>
+                    .gdg-s1dgczr6 {
+                        text-align: center;
+                    }
+                </style>
+            """   
+            st.markdown(text_align_center_css, unsafe_allow_html=True)
+
+
             # 데이터를 보기 좋게 테이블 형태로 표시
             display_data = []
 
