@@ -12,11 +12,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Supabase 환경 변수 로드
-SUPABASE_URL = "https://ahbsoacmxuokcbdhafqt.supabase.co"
-SUPABASE_KEY = "sb_publishable_iji2eRa_ugg_cy_E9jvOmw_MtMGbh0_"
-# Supabase 클라이언트 생성
-supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+
 
 # 1. Supabase 연결 초기화
 # Streamlit secrets.toml에 저장된 정보를 자동으로 로드합니다.
@@ -196,7 +192,7 @@ st.markdown(
 if 'rentcar_user_id' in st.query_params and not st.session_state['logged_in']:
     persisted_user_id = st.query_params['rentcar_user_id']
     try:
-        response = supabase.table('accounts').select('*').eq('account_id', persisted_user_id).execute()
+        response = conn.table('accounts').select('*').eq('account_id', persisted_user_id).execute()
         user_data = response.data
         if user_data:
             st.session_state['logged_in'] = True
@@ -214,7 +210,7 @@ if 'rentcar_user_id' in st.query_params and not st.session_state['logged_in']:
 def read_all_car():
     """예약 가능 차량 조회 (READ)"""
     try:
-        result = supabase.table('cars').select('*').eq('reservation_state', '이용 가능').execute()
+        result = conn.table('cars').select('*').eq('reservation_state', '이용 가능').execute()
         return result.data
     except Exception as e:
         st.error(f"차량 정보 조회 중 오류 발생: {e}")
@@ -384,7 +380,7 @@ def show_main_page():
                                 "rent_reservation_end_date": str(end_date),
                                 "rent_reservation_price": total_price
                             }
-                            response = supabase.table('reservations').insert(reservation_data).execute()
+                            response = conn.table('reservations').insert(reservation_data).execute()
                             if response.data:
                                 st.session_state['reservation_info'] = {
                                     'car_model': selected_car.get('car_model', ''),
@@ -484,7 +480,7 @@ def show_login_page():
             if submitted:
                 hashed_pw = hash_password(password)
                 try:
-                    response = supabase.table('accounts').select('*').eq('account_id', account_id).execute()
+                    response = conn.table('accounts').select('*').eq('account_id', account_id).execute()
                     user_data = response.data
                     if user_data and user_data[0]['password'] == hashed_pw:
                         st.success(f"환영합니다, {account_id}님!")
@@ -527,11 +523,11 @@ def show_signup_page():
                 else:
                     hashed_pw = hash_password(password)
                     try:
-                        check_user = supabase.table('accounts').select('account_id').eq('account_id', account_id).execute()
+                        check_user = conn.table('accounts').select('account_id').eq('account_id', account_id).execute()
                         if check_user.data:
                             st.error("이미 존재하는 계정 ID입니다. 다른 ID를 사용해 주세요.")
                         else:
-                            response = supabase.table('accounts').insert({"account_id": account_id, "password": hashed_pw, "birth": birth, "phone_number": phone_number}).execute()
+                            response = conn.table('accounts').insert({"account_id": account_id, "password": hashed_pw, "birth": birth, "phone_number": phone_number}).execute()
                             if response.data:
                                 st.success("회원가입이 성공적으로 완료되었습니다! 로그인해 주세요.")
                                 st.session_state['current_page'] = 'login'
