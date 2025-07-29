@@ -32,7 +32,7 @@ def crawl_global_it_news(parameter) :
     options.add_argument('--disable-gpu')       # GPU 사용 비활성화 (Headless 모드에서 권장)
 
     # ChromeService 객체를 생성하여 ChromeDriver를 자동으로 관리
-    service = ChromeService(executable_path=ChromeDriverManager().install())
+    service = ChromeService(executable_path=ChromeDriverManager().install(), log_path="chromedriver.log")
     driver = webdriver.Chrome(service=service, options=options)
 
     try:
