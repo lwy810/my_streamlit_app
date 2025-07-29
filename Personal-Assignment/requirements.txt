@@ -1,4 +1,2 @@
 streamlit
-selenium
-datetime
-webdriver-manager
+playwright
