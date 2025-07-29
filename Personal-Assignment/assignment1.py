@@ -32,7 +32,7 @@ def crawl_global_it_news(parameter) :
 
     # ChromeService 객체를 생성하여 ChromeDriver를 자동으로 관리
     service = ChromeService(executable_path=ChromeDriverManager().install())
-    driver = webdriver.Chrome(service=service)
+    driver = webdriver.Chrome(service=service, options=options)
 
     try:
         # print("🚀 네이버 뉴스 크롤링 시작...")

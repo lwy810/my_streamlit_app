@@ -1,4 +1,4 @@
 streamlit
 selenium
 datetime
-webdriver_manager
+webdriver-manager
