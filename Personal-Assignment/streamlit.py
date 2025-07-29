@@ -1,171 +1,180 @@
 import streamlit as st
 import logging
-from playwright.sync_api import sync_playwright # 추가
+from playwright.sync_api import sync_playwright # Playwright 동기 API 임포트
 import time
 import csv
 from datetime import datetime
 
-
+# 로깅 설정: INFO 레벨 이상의 메시지를 출력
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# Streamlit 페이지 설정
 st.set_page_config(
-    page_title="메인 페이지: 작업 실행",
-    layout="centered"
+    page_title="메인 페이지: 작업 실행", # 페이지 제목
+    layout="centered" # 페이지 레이아웃을 중앙으로 설정
 )
 
-# @st.cache_resource 데코레이터 추가 (Playwright 브라우저 캐싱)
+# @st.cache_resource 데코레이터 추가 (Playwright 브라우저 인스턴스를 캐싱하여 앱 재실행 시에도 유지)
 @st.cache_resource
 def get_playwright_browser():
-    # Playwright는 시작 시 필요한 브라우저 바이너리를 자동으로 다운로드합니다.
-    # Streamlit Community Cloud 환경에서 headless=True로 설정된 Chromium은 잘 작동합니다.
-    p = sync_playwright().start()
-    browser = p.chromium.launch(headless=True)
-    return browser
+    """
+    Playwright 브라우저 인스턴스를 가져오거나 생성합니다.
+    이 함수는 Streamlit 앱이 재실행되어도 브라우저 인스턴스를 재사용합니다.
+    """
+    try:
+        # Playwright 시작 (브라우저 바이너리가 없으면 자동으로 다운로드 시도)
+        # Streamlit Community Cloud와 같은 환경에서는 headless=True가 권장됩니다.
+        p = sync_playwright().start()
+        browser = p.chromium.launch(headless=True) # Chromium 브라우저를 헤드리스 모드로 실행
+        return browser
+    except Exception as e:
+        # 브라우저 실행 실패 시 에러 로깅 및 예외 발생
+        logger.error(f"Playwright 브라우저 실행 실패: {e}")
+        st.error(f"Playwright 브라우저를 실행할 수 없습니다. Playwright 브라우저가 설치되었는지 확인해주세요. 에러: {e}")
+        st.stop() # Streamlit 앱 실행 중지
 
 def crawl_global_it_news(parameter) :
-    """네이버 뉴스 크롤링"""
+    """네이버 부동산 매물을 크롤링하는 함수"""
 
-    parameter = parameter
-    print(parameter[0]) # type_option(직장인, 신혼부부)
-    print(parameter[1]) # area_option1(시)
-    print(parameter[2]) # area_option2(구)
-    print(parameter[3]) # area_option3(동)
-    print(parameter[4]) # type_option(직장인, 신혼부부)
-    print(parameter[5])
-    print(parameter[6])
+    # 입력 파라미터 출력 (디버깅용)
+    print(f"유형 옵션: {parameter[0]}") # type_option(직장인, 신혼부부)
+    print(f"지역 옵션1 (시): {parameter[1]}") # area_option1(시)
+    print(f"지역 옵션2 (구): {parameter[2]}") # area_option2(구)
+    print(f"지역 옵션3 (동): {parameter[3]}") # area_option3(동)
+    print(f"면적 옵션: {parameter[4]}") # type_option(직장인, 신혼부부)
+    print(f"예산: {parameter[5]}")
+    print(f"거래 유형: {parameter[6]}")
 
     # Playwright 브라우저 인스턴스 가져오기
     browser = get_playwright_browser()
-    page = browser.new_page() # 각 실행마다 새로운 페이지 생성
+    page = browser.new_page() # 각 크롤링 실행마다 새로운 페이지 생성
+
+    for_sale_list = [] # 매물 정보를 저장할 리스트 초기화
 
     try:
-        print("📰 네이버 메인 페이지 접속 중...")
-        page.goto("https://land.naver.com/")
+        print("📰 네이버 부동산 메인 페이지 접속 중...")
+        page.goto("https://land.naver.com/") # 네이버 부동산 페이지로 이동
         page.wait_for_load_state('networkidle') # 네트워크 활동이 없을 때까지 대기
 
         # 1-2. 매물 탭 버튼 클릭
-        # Playwright는 셀렉터가 더 강력합니다. XPath도 지원하지만 CSS 셀렉터가 권장됩니다.
-        # wait_for_selector를 사용하여 요소가 나타날 때까지 기다립니다.
+        # XPath 셀렉터를 사용하여 "매물" 탭 버튼 클릭
         page.click("xpath=//*[@id='lnb']/div/ul/li[2]/a[contains(@class,'NPI=a:article_beta')]")
-        page.wait_for_timeout(1500) # time.sleep 대신 Playwright의 wait_for_timeout 사용
+        page.wait_for_timeout(1500) # 1.5초 대기
+        print("1. 매물 탭 클릭 완료")
 
-        # 2. 매물 조건 클릭
-        # 지역 필터 클릭
+        # 2. 매물 조건 클릭 - 지역 필터 클릭
         page.click("(//span[contains(@class, 'area') and contains(@class, 'is-selected')])[1]")
         page.wait_for_timeout(1500)
-        print("1")
+        print("2. 지역 필터 클릭 완료")
 
         # 시 선택
         page.click(f'//*[@id="region_filter"]/div/div/div[2]/ul/li[contains(., "{parameter[1]}")]')
         page.wait_for_timeout(1500)
-        print("2")
+        print(f"3. 시 선택 완료: {parameter[1]}")
 
         # 구 선택
         page.click(f'//*[@id="region_filter"]/div/div/div[2]/ul/li[contains(., "{parameter[2]}")]')
         page.wait_for_timeout(1500)
-        print("3")
+        print(f"4. 구 선택 완료: {parameter[2]}")
 
         # 동 선택
         page.click(f'//*[@id="region_filter"]/div/div/div[2]/ul/li[contains(., "{parameter[3]}")]')
         page.wait_for_timeout(1500)
-        print("4")
+        print(f"5. 동 선택 완료: {parameter[3]}")
 
-        # 매물 검색
+        # 매물 검색 버튼 클릭
         page.click('//*[@id="region_filter"]/div/div/div[4]/a[@class="btn_mapview"]')
-        page.wait_for_timeout(2000)
-        print("5")
+        page.wait_for_timeout(2000) # 2초 대기
+        print("6. 매물 검색 버튼 클릭 완료")
 
-        # 추가 필터
-        # 거래 유형 필터 클릭
+        # 추가 필터 - 거래 유형 필터 클릭
         if parameter[6] != "전체" :
             page.click('//*[@id="trade_type_filter"]/div/a')
             page.wait_for_timeout(1500)
-            print("6")
+            print("7. 거래 유형 필터 클릭 완료")
 
         # 거래 유형 필터 선택
         if parameter[6] != "전체" :
             page.click(f'//*[@id="trade_type_filter"]/div/div[1]/div/ul/li/label[contains(., "{parameter[6]}")]')
             page.wait_for_timeout(1500)
-            print("7")
+            print(f"8. 거래 유형 선택 완료: {parameter[6]}")
 
         # 거래가 필터 클릭
         page.click('//*[@id="price_filter"]/div/a')
         page.wait_for_timeout(1500)
-        print("8")
+        print("9. 거래가 필터 클릭 완료")
 
-        # 거래가 입력
-        # Playwright에서는 fill() 메서드를 사용하여 바로 값을 채울 수 있습니다.
+        # 거래가 입력 (최대 예산)
         page.fill('//*[@id="price_maximum"]', parameter[5])
         page.wait_for_timeout(1500)
-        print("10")
+        print(f"10. 예산 입력 완료: {parameter[5]}")
 
         # 면적 필터 클릭
         page.click('//*[@id="area_filter"]/div/a')
         page.wait_for_timeout(1500)
-        print("11")
+        print("11. 면적 필터 클릭 완료")
 
         # 면적 필터 선택
         page.click(f'//*[@id="area_filter"]/div/div[1]/div/div[2]/button[contains(.,"{parameter[4]}")]')
         page.wait_for_timeout(1500)
-        print("12")
+        print(f"12. 면적 선택 완료: {parameter[4]}")
 
+        # 면적 필터 닫기 버튼 클릭
         page.click('//*[@id="area_filter"]/div/div[1]/div/button[@class="btn_close"]')
         page.wait_for_timeout(1500)
-        print("13")
+        print("13. 면적 필터 닫기 완료")
 
-        # 지역 확대 버튼 클릭
+        # 지역 확대 버튼 클릭 (맵이 로드되고 매물이 나타날 때까지 충분히 대기)
         page.click('//*[@id="map"]/div[2]/div[3]/div/div[2]/div/button[2]')
-        page.wait_for_timeout(10000) # 대기 시간 유지
-        print("14")
+        page.wait_for_timeout(10000) # 10초 대기 (중요: 매물 로딩 시간 고려)
+        print("14. 지역 확대 버튼 클릭 완료")
 
-        sub_url = page.url
+        sub_url = page.url # 현재 페이지 URL 저장
 
         # 4. 매물 데이터 수집
-        for_sale_list = []
         try :
-            # Playwright의 locator를 사용하여 요소 찾기
+            # 'marker_complex--apart' 클래스를 포함하는 모든 매물 요소 찾기
             items_locator = page.locator('//a[contains(@class, "marker_complex--apart")]')
-            items = items_locator.all() # 모든 요소 가져오기
-            print(f'20 {len(items)}')
+            items = items_locator.all() # 모든 요소를 리스트로 가져오기
+            print(f'총 {len(items)}개의 매물 마커 발견')
 
             if not items :  # 부합하는 조건의 매물이 없을 시
                 print("❌ 조건에 부합하는 매물이 없습니다.")
-                return for_sale_list
+                return for_sale_list # 빈 리스트 반환
             else : # 부합하는 조건의 매물 존재 시
                 for i, item_element in enumerate(items) :
                     try :
-                        # Playwright의 locator에서 직접 텍스트나 속성을 추출합니다.
-                        # Selenium의 execute_script를 사용하지 않아도 됩니다.
+                        # 매물 이름, 가격, 면적 요소 찾기
                         name_element = item_element.locator('.//div/div/div[@class="complex_title"]')
                         price_element = item_element.locator('.//div/div/div/div/span[@class="price_default"]')
                         volumn_element = item_element.locator('.//div/div/dl/dd[@class="complex_size-default"]')
 
-                        # 요소가 화면에 보이도록 스크롤하고, 텍스트를 가져오기 전에 대기할 수 있습니다.
-                        # name_element.scroll_into_view_if_needed() 
-                        # page.wait_for_timeout(500) # 필요시 짧은 대기
+                        # 텍스트 콘텐츠 추출
+                        item_name = name_element.text_content().strip() # 매물 이름
+                        item_price = price_element.text_content().strip() # 매물 가격
 
-                        item_name = name_element.text_content().strip() # 매물 이름 추출
-                        item_price = price_element.text_content().strip()  # 매물 가격 추출
+                        # 가격 단위 변환 (억, 만)
                         if '억' in item_price :
                             item_price = float(item_price.replace("억",""))
                             item_price = int(item_price * 10000)
                         elif '만' in item_price :
                             item_price = int(item_price.replace("만",""))
 
-                        item_volumn = volumn_element.text_content().strip()  # 매물 면적 추출
-                        item_volumn = item_volumn.replace("㎡", "")
+                        item_volumn = volumn_element.text_content().strip() # 매물 면적
+                        item_volumn = item_volumn.replace("㎡", "") # '㎡' 제거
 
+                        # 매물 상세 페이지 URL 생성
                         url_id = item_element.get_attribute('id').replace("COMPLEX","")
                         url = sub_url.replace("complexes?",f"complexes/{url_id}?")
 
 
-                        print(f'({i+1}) {item_name}')
-                        print(f'({i+1}) {item_price}')
-                        print(f'({i+1}) {item_volumn}')
-                        print(f'({i+1}) {url}')
+                        print(f'({i+1}) 이름: {item_name}')
+                        print(f'({i+1}) 가격: {item_price}')
+                        print(f'({i+1}) 면적: {item_volumn}')
+                        print(f'({i+1}) URL: {url}')
 
-
+                        # 수집된 데이터를 리스트에 추가
                         for_sale_list.append({
                                 'index': i + 1,
                                 'type' :parameter[6],
@@ -173,34 +182,33 @@ def crawl_global_it_news(parameter) :
                                 'item_price': item_price,
                                 'item_volumn' : item_volumn,
                                 'url' : url,
-                                'time': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                                'time': datetime.now().strftime("%Y-%m-%d %H:%M:%S") # 현재 시간
                         })
-                        print("25")
-                        print(f"📰 [{len(for_sale_list)}개]")
+                        print(f"📰 현재까지 {len(for_sale_list)}개 매물 수집 완료")
                     except Exception as inner_e :
-                        print(f"❌ 매물 리스트 생성에 실패하였습니다: {inner_e}")
+                        print(f"❌ 개별 매물 정보 처리 실패: {inner_e}")
                         # 특정 매물 처리 실패 시에도 전체 로직은 계속 진행
         except Exception as outer_e:
             print(f"❌ 매물 요소들을 찾는 데 실패하였습니다: {outer_e}")
-            return for_sale_list
+            return for_sale_list # 실패 시 현재까지 수집된 리스트 반환
 
     except Exception as e:
-        print(f"❌ 에러: {e}")
-        return []
+        print(f"❌ 크롤링 중 예상치 못한 에러 발생: {e}")
+        return [] # 에러 발생 시 빈 리스트 반환
     finally:
-        page.close() # 현재 페이지 닫기 (브라우저 인스턴스는 @st.cache_resource에 의해 관리)
-        # browser.close() # @st.cache_resource를 사용하면 명시적으로 닫을 필요는 없습니다.
+        page.close() # 현재 페이지 닫기 (브라우저 인스턴스는 @st.cache_resource에 의해 관리됨)
+        # browser.close() # @st.cache_resource를 사용하면 브라우저를 명시적으로 닫을 필요는 없습니다.
 
         if for_sale_list:
             print(f"\n📊 총 {len(for_sale_list)}개 매물 탐색 완료!")
-            save_csv(for_sale_list)  # CSV 생성 시작
+            save_csv(for_sale_list)  # CSV 파일 생성
             return for_sale_list
-
         else:
-            print("❌ 매물를 가져올 수 없습니다.")
+            print("❌ 매물을 가져올 수 없습니다.")
+            return [] # 매물이 없을 경우 빈 리스트 반환
 
 def save_csv(for_sale_list):
-    """CSV 파일 저장"""
+    """CSV 파일로 데이터를 저장하는 함수"""
     if not for_sale_list:
         print("❌ 저장할 데이터가 없습니다.")
         return
@@ -209,13 +217,12 @@ def save_csv(for_sale_list):
 
     with open(filename, 'w', newline='', encoding='utf-8-sig') as f:
         writer = csv.DictWriter(f, fieldnames=['index', 'type', 'item_name', 'item_price', 'item_volumn', 'url', 'time'])
-        writer.writeheader()
-        writer.writerows(for_sale_list)
-
+        writer.writeheader() # 헤더 작성
+        writer.writerows(for_sale_list) # 데이터 행 작성
 
     print(f"✅ 저장완료: {filename} ({len(for_sale_list)}개)")
 
-# --- st.session_state 초기화 (이전과 동일) ---
+# --- st.session_state 초기화 (Streamlit 앱 상태 관리) ---
 if 'type_option' not in st.session_state:
     st.session_state['type_option'] = "1. 유형을 선택하세요."
 if 'area1_option' not in st.session_state:
@@ -233,6 +240,7 @@ if 'budget' not in st.session_state:
 if 'for_sale_data' not in st.session_state:
     st.session_state['for_sale_data'] = []
 
+# 사이드바 숨기기 CSS (기본적으로 숨김)
 invisible_sidebar_css = """
 <style>
     .stSidebar {
@@ -241,6 +249,7 @@ invisible_sidebar_css = """
 </style>
 """
 
+# 사이드바 보이기 CSS
 visible_sidebar_css = """
 <style>
     .stSidebar {
@@ -249,14 +258,15 @@ visible_sidebar_css = """
 </style>
 """
 
-st.markdown(invisible_sidebar_css, unsafe_allow_html=True)
+st.markdown(invisible_sidebar_css, unsafe_allow_html=True) # 초기에는 사이드바 숨김
 
 
 st.markdown("<h2>직장인/신혼부부 맞춤 부동산 매물 Search</h2>", unsafe_allow_html=True)
 st.markdown("<br>", unsafe_allow_html=True)
 
-for_sale_list = []
+for_sale_list = [] # 크롤링 결과를 임시로 저장할 리스트
 
+# 지역 선택 그룹 데이터
 area1_group = ["2. 도시(도/시)를 선택하세요.", "서울시", "경기도", "인천시", "광주시"]
 
 area2_group = [
@@ -302,6 +312,7 @@ area3_group = [
     ["4. 동을 선택하세요.", "농성동", "화정동"]
 ]
 
+# Streamlit UI 요소 (Selectbox, Text Input, Button)
 type_select = ["1. 유형을 선택하세요.", "직장인", "신혼부부"]
 type_option_index = type_select.index(st.session_state['type_option']) if st.session_state['type_option'] in type_select else 0
 type_option = st.selectbox("유형 선택", type_select, index=type_option_index, label_visibility="hidden", key="type_option_widget")
@@ -323,12 +334,12 @@ if st.session_state['type_option'] != "1. 유형을 선택하세요." :
             area3_index_offset = area2_group[area2_index_for_area3].index(st.session_state['area2_option'])
 
             current_area3_group_index = area2_group[area2_index_for_area3].index(st.session_state['area2_option'])
-            if area2_index_for_area3 == 2:
-                current_area3_group_index += 9
-            elif area2_index_for_area3 == 3:
-                current_area3_group_index += 18
-            elif area2_index_for_area3 == 4:
-                current_area3_group_index += 27
+            if area2_index_for_area3 == 2: # 경기도
+                current_area3_group_index += 9 # 경기도 구 목록 이후부터 동 목록 시작
+            elif area2_index_for_area3 == 3: # 인천시
+                current_area3_group_index += 18 # 인천시 구 목록 이후부터 동 목록 시작
+            elif area2_index_for_area3 == 4: # 광주시
+                current_area3_group_index += 27 # 광주시 구 목록 이후부터 동 목록 시작
 
             area3_current_group = area3_group[current_area3_group_index]
             area3_option_index = area3_current_group.index(st.session_state['area3_option']) if st.session_state['area3_option'] in area3_current_group else 0
@@ -365,7 +376,6 @@ if st.session_state['type_option'] != "1. 유형을 선택하세요." :
                         elif budget:
                             st.write(f"입력한 예산: {budget_int}만원")
 
-
                         if budget:
                             if st.button("매물 검색"):
                                 parameter = [st.session_state['type_option'], st.session_state['area1_option'],
@@ -383,11 +393,14 @@ if st.session_state['type_option'] != "1. 유형을 선택하세요." :
                                     st.error("죄송합니다. 오류 체크 중입니다.")
                                     st.text(f"에러 내용: {e}")
 
+# 크롤링 결과가 있으면 세션 상태에 저장
 if for_sale_list:
     st.session_state['for_sale_data'] = for_sale_list
 
+# 세션 상태에 매물 데이터가 있으면 성공 메시지 표시 및 리포트 페이지로 이동 버튼 활성화
 if st.session_state.get('for_sale_data') != [] :
     st.success("매물 찾기 성공!")
-    st.markdown(visible_sidebar_css, unsafe_allow_html=True)
+    st.markdown(visible_sidebar_css, unsafe_allow_html=True) # 사이드바 보이게 설정
     if st.button("리포트 페이지") :
+        # Streamlit의 페이지 전환 기능 (pages/report.py 파일이 존재해야 함)
         st.switch_page("pages/report.py")
