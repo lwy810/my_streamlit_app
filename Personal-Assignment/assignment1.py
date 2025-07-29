@@ -28,6 +28,7 @@ def crawl_global_it_news(parameter) :
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--log-level=3")  # 로그 레벨 최소화
+    options.add_argument("--headless") # <-- 이 줄을 추가하세요!
 
 
     # ChromeService 객체를 생성하여 ChromeDriver를 자동으로 관리
