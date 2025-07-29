@@ -10,7 +10,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Streamlit 페이지 설정
-st.set_page_config(
+st.set_page_config (
     page_title="메인 페이지: 작업 실행", # 페이지 제목
     layout="centered" # 페이지 레이아웃을 중앙으로 설정
 )
@@ -26,12 +26,19 @@ def get_playwright_browser():
         # Playwright 시작 (브라우저 바이너리가 없으면 자동으로 다운로드 시도)
         # Streamlit Community Cloud와 같은 환경에서는 headless=True가 권장됩니다.
         p = sync_playwright().start()
-        browser = p.chromium.launch(headless=True) # Chromium 브라우저를 헤드리스 모드로 실행
+        # Chromium 브라우저를 헤드리스 모드로 실행
+        # Playwright 브라우저 바이너리가 설치되어 있지 않으면 여기서 에러가 발생합니다.
+        browser = p.chromium.launch(headless=True)
         return browser
     except Exception as e:
-        # 브라우저 실행 실패 시 에러 로깅 및 예외 발생
+        # 브라우저 실행 실패 시 에러 로깅 및 사용자에게 안내
         logger.error(f"Playwright 브라우저 실행 실패: {e}")
-        st.error(f"Playwright 브라우저를 실행할 수 없습니다. Playwright 브라우저가 설치되었는지 확인해주세요. 에러: {e}")
+        st.error(
+            f"Playwright 브라우저를 실행할 수 없습니다. "
+            f"터미널에서 'playwright install chromium' 명령을 실행하여 "
+            f"브라우저 바이너리를 설치했는지 확인해주세요. "
+            f"자세한 에러: {e}"
+        )
         st.stop() # Streamlit 앱 실행 중지
 
 def crawl_global_it_news(parameter) :
@@ -48,6 +55,7 @@ def crawl_global_it_news(parameter) :
 
     # Playwright 브라우저 인스턴스 가져오기
     browser = get_playwright_browser()
+    # 브라우저 인스턴스를 성공적으로 가져오지 못했다면 (st.stop() 호출로) 이 이후 코드는 실행되지 않습니다.
     page = browser.new_page() # 각 크롤링 실행마다 새로운 페이지 생성
 
     for_sale_list = [] # 매물 정보를 저장할 리스트 초기화
@@ -116,7 +124,7 @@ def crawl_global_it_news(parameter) :
         print("11. 면적 필터 클릭 완료")
 
         # 면적 필터 선택
-        page.click(f'//*[@id="area_filter']/div/div[1]/div/div[2]/button[contains(.,"{parameter[4]}")]')
+        page.click(f"//*[@id='area_filter']/div/div[1]/div/div[2]/button[contains(.,'{parameter[4]}')]")
         page.wait_for_timeout(1500)
         print(f"12. 면적 선택 완료: {parameter[4]}")
 
