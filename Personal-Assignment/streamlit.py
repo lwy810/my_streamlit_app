@@ -1,11 +1,9 @@
 import streamlit as st
 import logging
 from playwright.sync_api import sync_playwright # 추가
-
 import time
 import csv
 from datetime import datetime
-
 
 
 logging.basicConfig(level=logging.INFO)
