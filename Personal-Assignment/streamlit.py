@@ -116,7 +116,7 @@ def crawl_global_it_news(parameter) :
         print("11. 면적 필터 클릭 완료")
 
         # 면적 필터 선택
-        page.click(f'//*[@id="area_filter"]/div/div[1]/div/div[2]/button[contains(.,"{parameter[4]}")]')
+        page.click(f'//*[@id="area_filter']/div/div[1]/div/div[2]/button[contains(.,"{parameter[4]}")]')
         page.wait_for_timeout(1500)
         print(f"12. 면적 선택 완료: {parameter[4]}")
 
