@@ -150,18 +150,6 @@ def crawl_global_it_news(parameter) :
 
         # 4. 매물 데이터 수집
         for_sale_list = []
-        # try :
-        #     name = wait.until(EC.presence_of_all_elements_located((By.XPATH, '//a[contains(@id, "COMPLEX")]/div/div/div[@class="complex_title"]')))
-        #     print(f'15 {len(name)}')
-        #     price = wait.until(EC.presence_of_all_elements_located((By.XPATH, '//a[contains(@id, "COMPLEX")]/div/div/div/div/span[@class="price_default"]')))
-        #     print(f'16 {len(price)}')
-        #     number_households =  wait.until(EC.presence_of_all_elements_located((By.XPATH, '//a[contains(@id, "COMPLEX")]/div/div[@class="complex_feature is-feature_default"]')))
-        #     print(f'17 {len(number_households)}')
-        #     volumn = wait.until(EC.presence_of_all_elements_located((By.XPATH, '//a[contains(@id, "COMPLEX")]/div/div/dl/dd[@class="complex_size-default"]')))
-        #     print(f'18 {len(volumn)}')
-        # except TimeoutException :
-        #     print("매물이 검색되지 않았습니다.")
-        #     return for_sale_list
 
         try :
             items = wait.until(EC.presence_of_all_elements_located((By.XPATH, '//a[contains(@class, "marker_complex--apart")]')))
