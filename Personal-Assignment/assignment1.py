@@ -1,6 +1,8 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service as ChromeService
+from webdriver_manager.chrome import ChromeDriverManager
 import time
 import csv
 from datetime import datetime
@@ -27,8 +29,11 @@ def crawl_global_it_news(parameter) :
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--log-level=3")  # 로그 레벨 최소화
 
-    driver = webdriver.Chrome(options=options)
-    
+
+    # ChromeService 객체를 생성하여 ChromeDriver를 자동으로 관리
+    service = ChromeService(executable_path=ChromeDriverManager().install())
+    driver = webdriver.Chrome(service=service)
+
     try:
         # print("🚀 네이버 뉴스 크롤링 시작...")
         
