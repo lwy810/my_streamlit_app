@@ -1,19 +1,11 @@
 import streamlit as st
 import logging
-# from selenium import webdriver # 제거
-# from selenium.webdriver.common.by import By # 제거
-# from selenium.webdriver.chrome.options import Options # 제거
-# from selenium.webdriver.chrome.service import Service as ChromeService # 제거
-# from webdriver_manager.chrome import ChromeDriverManager # 제거
 from playwright.sync_api import sync_playwright # 추가
 
 import time
 import csv
 from datetime import datetime
-# from selenium.webdriver.common.action_chains import ActionChains # 제거
-# from selenium.webdriver.support.ui import WebDriverWait # 제거
-# from selenium.webdriver.support import expected_conditions as EC # 제거
-# from selenium.common.exceptions import TimeoutException # 제거
+
 
 
 logging.basicConfig(level=logging.INFO)
