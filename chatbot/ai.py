@@ -4,7 +4,8 @@ import json
 import os # os 모듈 임포트
 from dotenv import load_dotenv # dotenv 라이브러리 임포트
 
-os.system("bash ./apt-install.sh")
+# 이 부분을 제거하거나 주석 처리하세요
+# os.system("bash ./apt-install.sh")
 
 # .env 파일에서 환경 변수 로드
 load_dotenv()
@@ -54,7 +55,7 @@ with st.expander("⚙️ 설정 (필수 사항)", expanded=True): # 기본적으
     st.session_state['novel_background'] = st.multiselect( # multiselect로 변경
         "세계관(배경) 선택 (다중 선택 가능):",
         ["현대", "고대 중국", "서양 왕정"],
-        default=st.session_state['novel_background'] # default 파라メーター 사용
+        default=st.session_state['novel_background'] # default 파라메터 사용
     )
 
     st.session_state['hero_character'] = st.multiselect( # multiselect로 변경
