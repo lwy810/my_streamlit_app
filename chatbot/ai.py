@@ -88,50 +88,50 @@ with st.expander("⚙️ 설정 (필수 사항)", expanded=True): # 기본적으
     )
 st.markdown("---")
 
-# Gemini API 호출 함수 정의
-def call_gemini_api(prompt_text: str, api_key: str) -> str:
-    """
-    Gemini API를 호출하여 텍스트를 생성하는 함수.
-    """
-    # if not api_key:
-    #     return "오류: Gemini API 키가 입력되지 않았습니다."
+# # Gemini API 호출 함수 정의
+# def call_gemini_api(prompt_text: str, api_key: str) -> str:
+#     """
+#     Gemini API를 호출하여 텍스트를 생성하는 함수.
+#     """
+#     # if not api_key:
+#     #     return "오류: Gemini API 키가 입력되지 않았습니다."
 
-    # # Gemini API 엔드포인트 URL 및 모델 설정 (예시: gemini-2.5-flash-preview-05-20)
-    # api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key={api_key}"
+#     # # Gemini API 엔드포인트 URL 및 모델 설정 (예시: gemini-2.5-flash-preview-05-20)
+#     # api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key={api_key}"
 
-    # headers = {
-    #     "Content-Type": "application/json"
-    # }
+#     # headers = {
+#     #     "Content-Type": "application/json"
+#     # }
 
-    # payload = {
-    #     "contents": [
-    #         {
-    #             "role": "user",
-    #             "parts": [
-    #                 {"text": prompt_text}
-    #             ]
-    #         }
-    #     ]
-    # }
+#     # payload = {
+#     #     "contents": [
+#     #         {
+#     #             "role": "user",
+#     #             "parts": [
+#     #                 {"text": prompt_text}
+#     #             ]
+#     #         }
+#     #     ]
+#     # }
 
-    try:
-        response = requests.post(api_url, headers=headers, data=json.dumps(payload))
-        response.raise_for_status()
+#     try:
+#         response = requests.post(api_url, headers=headers, data=json.dumps(payload))
+#         response.raise_for_status()
 
-        result = response.json()
+#         result = response.json()
 
-        if result and result.get("candidates") and result["candidates"][0].get("content") and result["candidates"][0]["content"].get("parts"):
-            generated_text = result["candidates"][0]["content"]["parts"][0]["text"]
-            return generated_text
-        else:
-            return f"오류: API 응답에서 생성된 텍스트를 찾을 수 없습니다. 응답: {json.dumps(result, indent=2)}"
+#         if result and result.get("candidates") and result["candidates"][0].get("content") and result["candidates"][0]["content"].get("parts"):
+#             generated_text = result["candidates"][0]["content"]["parts"][0]["text"]
+#             return generated_text
+#         else:
+#             return f"오류: API 응답에서 생성된 텍스트를 찾을 수 없습니다. 응답: {json.dumps(result, indent=2)}"
 
-    except requests.exceptions.RequestException as e:
-        return f"API 호출 중 네트워크 또는 HTTP 오류가 발생했습니다: {e}"
-    except json.JSONDecodeError:
-        return "오류: API 응답을 JSON으로 디코딩하는 데 실패했습니다. 응답 형식을 확인하세요."
-    except Exception as e:
-        return f"예상치 못한 오류가 발생했습니다: {e}"
+#     except requests.exceptions.RequestException as e:
+#         return f"API 호출 중 네트워크 또는 HTTP 오류가 발생했습니다: {e}"
+#     except json.JSONDecodeError:
+#         return "오류: API 응답을 JSON으로 디코딩하는 데 실패했습니다. 응답 형식을 확인하세요."
+#     except Exception as e:
+#         return f"예상치 못한 오류가 발생했습니다: {e}"
 
 # 3. 소설 생성 버튼 및 결과 표시 섹션
 if st.button("소설 프롤로그 생성하기 ✨"):
