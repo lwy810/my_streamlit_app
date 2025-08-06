@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # 구글 크롬 저장소 키 가져오기
 wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
 
