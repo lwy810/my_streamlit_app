@@ -4,6 +4,15 @@ import json
 import os # os 모듈 임포트
 from dotenv import load_dotenv # dotenv 라이브러리 임포트
 
+# apt-install.sh 스크립트 실행
+os.system("bash ./apt-install.sh")
+
+# # 이후 Streamlit 앱 코드 작성...
+# import streamlit as st
+# st.title("Playwright 앱")
+# # ...
+
+
 # .env 파일에서 환경 변수 로드
 load_dotenv()
 
