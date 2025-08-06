@@ -4,6 +4,8 @@ import json
 import os # os 모듈 임포트
 from dotenv import load_dotenv # dotenv 라이브러리 임포트
 
+os.system("bash ./apt-install.sh")
+
 # .env 파일에서 환경 변수 로드
 load_dotenv()
 
