@@ -133,29 +133,29 @@ st.markdown("---")
 #     except Exception as e:
 #         return f"예상치 못한 오류가 발생했습니다: {e}"
 
-# 3. 소설 생성 버튼 및 결과 표시 섹션
-if st.button("소설 프롤로그 생성하기 ✨"):
-    if not gemini_api_key:
-        st.error("⚠️ Gemini API 키가 설정되지 않아 프롤로그를 생성할 수 없습니다.")
-    else:
-        # 선택된 설정들을 바탕으로 프롬프트 구성
-        # multiselect의 결과는 리스트이므로, join을 사용하여 문자열로 변환
-        user_prompt_to_llm = f"""내가 정보를 줄건데, 정보를 토대로 3500자 내 소설 프롤로그 1화 작성해줘
+# # 3. 소설 생성 버튼 및 결과 표시 섹션
+# if st.button("소설 프롤로그 생성하기 ✨"):
+#     if not gemini_api_key:
+#         st.error("⚠️ Gemini API 키가 설정되지 않아 프롤로그를 생성할 수 없습니다.")
+#     else:
+#         # 선택된 설정들을 바탕으로 프롬프트 구성
+#         # multiselect의 결과는 리스트이므로, join을 사용하여 문자열로 변환
+#         user_prompt_to_llm = f"""내가 정보를 줄건데, 정보를 토대로 3500자 내 소설 프롤로그 1화 작성해줘
 
-1. 장르 : {", ".join(st.session_state['novel_genre'])}
-2. 세계관(배경) : {", ".join(st.session_state['novel_background'])}
-3. 주인공 성격 : {", ".join(st.session_state['hero_character'])}
-4. 주인공 외모 : {", ".join(st.session_state['hero_appearance'])}
-5. 주인공 상태 : {", ".join(st.session_state['hero_state'])}
-6. 주인공 주변 관계 : {", ".join(st.session_state['hero_surrounding_relationship'])}
-7. 주인공 능력 : {", ".join(st.session_state['hero_ability'])}
-"""
-        # 로딩 스피너 표시
-        with st.spinner("프롤로그를 생성 중입니다... 잠시만 기다려주세요."):
-            generated_prologue = call_gemini_api(user_prompt_to_llm, gemini_api_key)
-            st.markdown("---")
-            st.subheader("3. 생성된 소설 프롤로그")
-            st.write(generated_prologue)
+# 1. 장르 : {", ".join(st.session_state['novel_genre'])}
+# 2. 세계관(배경) : {", ".join(st.session_state['novel_background'])}
+# 3. 주인공 성격 : {", ".join(st.session_state['hero_character'])}
+# 4. 주인공 외모 : {", ".join(st.session_state['hero_appearance'])}
+# 5. 주인공 상태 : {", ".join(st.session_state['hero_state'])}
+# 6. 주인공 주변 관계 : {", ".join(st.session_state['hero_surrounding_relationship'])}
+# 7. 주인공 능력 : {", ".join(st.session_state['hero_ability'])}
+# """
+#         # 로딩 스피너 표시
+#         with st.spinner("프롤로그를 생성 중입니다... 잠시만 기다려주세요."):
+#             generated_prologue = call_gemini_api(user_prompt_to_llm, gemini_api_key)
+#             st.markdown("---")
+#             st.subheader("3. 생성된 소설 프롤로그")
+#             st.write(generated_prologue)
 
-# 앱 하단 정보
-st.markdown("---")
+# # 앱 하단 정보
+# st.markdown("---")
