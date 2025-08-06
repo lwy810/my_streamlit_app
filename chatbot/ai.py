@@ -93,26 +93,26 @@ def call_gemini_api(prompt_text: str, api_key: str) -> str:
     """
     Gemini API를 호출하여 텍스트를 생성하는 함수.
     """
-    if not api_key:
-        return "오류: Gemini API 키가 입력되지 않았습니다."
+    # if not api_key:
+    #     return "오류: Gemini API 키가 입력되지 않았습니다."
 
-    # Gemini API 엔드포인트 URL 및 모델 설정 (예시: gemini-2.5-flash-preview-05-20)
-    api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key={api_key}"
+    # # Gemini API 엔드포인트 URL 및 모델 설정 (예시: gemini-2.5-flash-preview-05-20)
+    # api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key={api_key}"
 
-    headers = {
-        "Content-Type": "application/json"
-    }
+    # headers = {
+    #     "Content-Type": "application/json"
+    # }
 
-    payload = {
-        "contents": [
-            {
-                "role": "user",
-                "parts": [
-                    {"text": prompt_text}
-                ]
-            }
-        ]
-    }
+    # payload = {
+    #     "contents": [
+    #         {
+    #             "role": "user",
+    #             "parts": [
+    #                 {"text": prompt_text}
+    #             ]
+    #         }
+    #     ]
+    # }
 
     try:
         response = requests.post(api_url, headers=headers, data=json.dumps(payload))
