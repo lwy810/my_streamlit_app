@@ -3,3 +3,5 @@ requests
 json
 os
 dotenv
+google-chrome-stable
+playwright
